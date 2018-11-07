@@ -2196,3 +2196,5 @@ Use "help" command to see the list of available commands.
 2018-Nov-07 07:59:48.286149 INFO    [simplewallet] Height 919, transaction 16358c95593f4cd3e42924dc5f8c64b10d04688be1e8a7dd2270a7e01a17c128, received 70.122483435085
 2018-Nov-07 08:00:38.178755 INFO    [simplewallet] Height 920, transaction 5bf7718a064b0d91247f3934cc557c34a23ace2127e5e544fcfa41107c96316c, received 70.122215939039
 2018-Nov-07 08:02:28.894082 INFO    [simplewallet] Height 921, transaction 2bf4c0526c76f06cbe5f0231af75c52382b974bf31c4951289c40f69c8a03dab, received 70.121948444013
+2018-Nov-07 08:06:48.716700 INFO    [simplewallet] Height 922, transaction d2719df61dd5519b3e1e9f56f58e1bee0700ba7cdd560c4b5f390848ff5275c4, received 70.121680950008
+2018-Nov-07 08:06:58.882310 INFO    [simplewallet] Height 923, transaction cc96288b8f9327033f7a7994580cbcabc656c951d63587bfab184a64f790555c, received 70.121413457024
