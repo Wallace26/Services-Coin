@@ -1,0 +1,93 @@
+{
+  "file": "enable-cors.json",
+  "description": "Adds CORS support",
+  "required": [
+    "core/bytecoin.json"
+  ],
+  "files": [
+    {
+      "path": "/src/Daemon/Daemon.cpp",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "arg_testnet_on  = {",
+          "parameters": {
+            "text": [
+              "  const command_line::arg_descriptor<std::vector<std::string>>        arg_enable_cors = { \"enable-cors\", \"Adds header 'Access-Control-Allow-Origin' to the daemon's RPC responses. Uses the value as domain. Use * for all\" };"
+            ]
+          }
+        },
+        {
+          "action": "add_below",
+          "marker": "command_line::add_arg(desc_cmd_sett, arg_testnet_on);",
+          "parameters": {
+            "text": [
+              "command_line::add_arg(desc_cmd_sett, arg_enable_cors);"
+            ]
+          }
+        },
+        {
+          "action": "add_below",
+          "marker": "rpcServer.start(rpcConfig.bindIp, rpcConfig.bindPort);",
+          "parameters": {
+            "text": [
+              "rpcServer.enableCors(command_line::get_arg(vm, arg_enable_cors));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/Rpc/RpcServer.h",
+      "changes": [
+        {
+          "action": "add_below",
+          "marker": "ICryptoNoteProtocolHandler& m_protocol;",
+          "parameters": {
+            "text": [
+              "std::vector<std::string> m_cors_domains;"
+            ]
+          }
+        },
+        {
+          "action": "add_below",
+          "marker": "typedef std::function<bool(RpcServer*, const HttpRequest& request, HttpResponse& response)> HandlerFunction;",
+          "parameters": {
+            "text": [
+              "  bool enableCors(const std::vector<std::string>  domains);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/Rpc/RpcServer.cpp",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "bool RpcServer::isCoreReady() {",
+          "parameters": {
+            "text": [
+              "bool RpcServer::enableCors(const std::vector<std::string> domains) {",
+              "  m_cors_domains = domains;",
+              "  return true;",
+              "}",
+              ""
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "response.addHeader(\"Content-Type\", \"application/json\");",
+          "parameters": {
+            "text": [
+              "  for (const auto& cors_domain: m_cors_domains) {",
+              "    response.addHeader(\"Access-Control-Allow-Origin\", cors_domain);",
+              "  }"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

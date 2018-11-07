@@ -1,0 +1,139 @@
+{
+  "file": "mandatory-transaction-in-block.json",
+  "description": "Blocks must have at least one real transaction",
+  "required": [
+    "core/bytecoin.json"
+  ],
+  "files": [
+    {
+      "path": "/src/CryptoNoteConfig.h",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "const unsigned EMISSION_SPEED_FACTOR",
+          "parameters": {
+            "text": [
+              "const uint32_t MANDATORY_TRANSACTION                          = %s;"
+            ],
+            "replace_text_alt": [
+              "const uint32_t MANDATORY_TRANSACTION                          = 0;"
+            ],
+            "var": "MANDATORY_TRANSACTION"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/CryptoNoteCore/Currency.h",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "size_t m_blockGrantedFullRewardZone;",
+          "parameters": {
+            "text": [
+              "  uint32_t m_mandatoryTransaction;"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "CurrencyBuilder& blockGrantedFullRewardZone(size_t val)",
+          "parameters": {
+            "text": [
+              "  CurrencyBuilder& mandatoryTransaction(uint8_t val) { m_currency.m_mandatoryTransaction = val; return *this; }"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "size_t blockGrantedFullRewardZone()",
+          "parameters": {
+            "text": [
+              "  uint32_t mandatoryTransaction() const { return m_mandatoryTransaction; }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/CryptoNoteCore/Currency.cpp",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "blockGrantedFullRewardZone(parameters::CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE);",
+          "parameters": {
+            "text": [
+              "mandatoryTransaction(parameters::MANDATORY_TRANSACTION);"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "m_testnet(currency.m_testnet),",
+          "parameters": {
+            "text": [
+              "m_mandatoryTransaction(currency.m_mandatoryTransaction),"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/CryptoNoteCore/BlockValidationErrors.h",
+      "changes": [
+        {
+          "action": "add_below",
+          "marker": "PROOF_OF_WORK_TOO_WEAK,",
+          "parameters": {
+            "text": [
+              "NOT_ENOUGH_TRANSACTIONS,"
+            ]
+          }
+        },
+        {
+          "action": "add_below",
+          "marker": "case BlockValidationError::PROOF_OF_WORK_TOO_WEAK: return \"Proof of work is too weak\";",
+          "parameters": {
+            "text": [
+              "case BlockValidationError::NOT_ENOUGH_TRANSACTIONS: return \"New block must have at least one transaction\";"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/CryptoNoteCore/Core.cpp",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "auto currentDifficulty = cache->getDifficultyForNextBlock(previousBlockIndex);",
+          "parameters": {
+            "text": [
+              "  if (currency.mandatoryTransaction()) {",
+              "    if (cachedBlock.getBlock().transactionHashes.size() < 1 && cache->getBlockIndex(cachedBlock.getBlockHash()) > parameters::CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW) {",
+              "      logger(Logging::WARNING) << \"New block must have at least one transaction\";",
+              "      return error::BlockValidationError::NOT_ENOUGH_TRANSACTIONS;",
+              "    }",
+              "  }",
+              ""
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "size_t cumulativeSize = transactionsSize + getObjectBinarySize(b.baseTransaction);",
+          "parameters": {
+            "text": [
+              "  if (currency.mandatoryTransaction()) {",
+              "    if (transactionsSize == 0 && height > parameters::CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW) { ",
+              "      logger(Logging::ERROR, Logging::BRIGHT_RED) << \"Need at least one transaction beside base transaction\";",
+              "      return false;",
+              "    }",
+              "  }"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

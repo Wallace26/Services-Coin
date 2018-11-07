@@ -1,0 +1,157 @@
+{
+  "file": "multiply/cryptonote-coin-clones-support.json",
+  "description": "Add the ability to premine in multiply",
+  "required": [
+    "core/bytecoin.json",
+    "cryptonote-coin-clones-support.json",
+    "multiply.json",
+    "get-blockchain-settings.json"
+  ],
+  "files": [
+    {
+      "path": "/src/Daemon/Daemon.cpp",
+      "changes": [
+        {
+          "action": "add_below",
+          "marker": "const command_line::arg_descriptor< std::vector<std::string> > arg_CHECKPOINT",
+          "parameters": {
+            "text": [
+              "  const command_line::arg_descriptor<size_t>    arg_CRYPTONOTE_COIN_VERSION  = {\"CRYPTONOTE_COIN_VERSION\", \"size_t\", 0};"
+            ]
+          }
+        },
+        {
+          "action": "add_below",
+          "marker": "command_line::add_arg(desc_cmd_sett, arg_CHECKPOINT);",
+          "parameters": {
+            "text": [
+              "    command_line::add_arg(desc_cmd_sett, arg_CRYPTONOTE_COIN_VERSION);"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "currencyBuilder.testnet(testnet_mode);",
+          "parameters": {
+            "text": [
+              "    currencyBuilder.cryptonoteCoinVersion(command_line::get_arg(vm, arg_CRYPTONOTE_COIN_VERSION));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/PaymentGateService/CoinBaseConfiguration.h",
+      "changes": [
+        {
+          "action": "add_below",
+          "marker": "uint64_t MONEY_SUPPLY;",
+          "parameters": {
+            "text": [
+              "  size_t CRYPTONOTE_COIN_VERSION;"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/PaymentGateService/CoinBaseConfiguration.cpp",
+      "changes": [
+        {
+          "action": "add_below",
+          "marker": "MONEY_SUPPLY=CryptoNote::parameters::MONEY_SUPPLY;",
+          "parameters": {
+            "text": [
+              "    CRYPTONOTE_COIN_VERSION=CryptoNote::parameters::CRYPTONOTE_COIN_VERSION;"
+            ]
+          }
+        },
+        {
+          "action": "add_below",
+          "marker": "(\"MONEY_SUPPLY\", po::value<uint64_t>()->default_value(CryptoNote::parameters::MONEY_SUPPLY), \"uint64_t\")",
+          "parameters": {
+            "text": [
+              "    (\"CRYPTONOTE_COIN_VERSION\", po::value<size_t>()->default_value(0), \"size_t\")"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "if (options.count(\"EMISSION_SPEED_FACTOR\")) {",
+          "parameters": {
+            "text": [
+              "  if (options.count(\"CRYPTONOTE_COIN_VERSION\")) {",
+              "    CRYPTONOTE_COIN_VERSION = options[\"CRYPTONOTE_COIN_VERSION\"].as<size_t>();",
+              "  }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/PaymentGateService/PaymentGateService.cpp",
+      "changes": [
+        {
+          "action": "add_below",
+          "marker": "currencyBuilder.moneySupply(config.coinBaseConfig.MONEY_SUPPLY);",
+          "parameters": {
+            "text": [
+              "  currencyBuilder.cryptonoteCoinVersion(config.coinBaseConfig.CRYPTONOTE_COIN_VERSION);"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "path": "/src/Rpc/CoreRpcServerCommandsDefinitions.h",
+      "description": "Changes for get-blockchain-settings.json",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "std::string BYTECOIN_NETWORK;",
+          "parameters": {
+            "text": [
+              "  uint8_t CRYPTONOTE_COIN_VERSION;"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "KV_MEMBER(BYTECOIN_NETWORK)",
+          "parameters": {
+            "text": [
+              "    KV_MEMBER(CRYPTONOTE_COIN_VERSION)"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/Rpc/RpcServer.cpp",
+      "description": "Changes for get-blockchain-settings.json",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "res.core.CRYPTONOTE_NAME = m_core.getCurrency().cryptonoteName();",
+          "parameters": {
+            "text": [
+              "  if (m_core.getCurrency().cryptonoteCoinVersion() != 0) {",
+              "    res.extensions.push_back(\"cryptonote-coin-clones-support.json\");",
+              "  }"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "res.core.P2P_DEFAULT_PORT = m_p2p.get_this_peer_port();",
+          "parameters": {
+            "text": [
+              "  res.core.CRYPTONOTE_COIN_VERSION = m_core.getCurrency().cryptonoteCoinVersion();"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

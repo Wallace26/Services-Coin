@@ -1,0 +1,593 @@
+{
+  "file": "bug-fixes.json",
+  "description": "Fixing bugs in core",
+  "required": [
+    "core/bytecoin.json"
+  ],
+  "files": [
+    {
+      "path": "/src/Platform/OSX/System/Context.h",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "makecontext(uctx*, void(*)(), intptr_t);",
+          "parameters": {
+            "text": [
+              "extern void makecontext(uctx*, void(*)(void), intptr_t);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/Platform/OSX/System/Context.c",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "#include \"context.h\"",
+          "parameters": {
+            "text": [
+              "#include \"Context.h\""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/PaymentGate/WalletService.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "result.push_back(std::move(item));",
+          "parameters": {
+            "text": [
+              "    if (!block.transactions.empty()) {",
+              "      result.push_back(std::move(item));",
+              "    }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/CryptoNoteCore/SwappedMap.h",
+      "changes": [
+        {
+          "action": "add_below",
+          "marker": "#include <iomanip>",
+          "parameters": {
+            "text": [
+              "#include <iostream>"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/SimpleWallet/SimpleWallet.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "m_consoleHandler.setHandler(\"start_mining\", boost::bind(&simple_wallet::start_mining, this, _1), \"start_mining [<number_of_threads>] - Start mining in daemon\");",
+          "parameters": {
+            "text": [
+              "  //m_consoleHandler.setHandler(\"start_mining\", boost::bind(&simple_wallet::start_mining, this, _1), \"start_mining [<number_of_threads>] - Start mining in daemon\");"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "m_consoleHandler.setHandler(\"stop_mining\", boost::bind(&simple_wallet::stop_mining, this, _1), \"Stop mining in daemon\");",
+          "parameters": {
+            "text": [
+              "  //m_consoleHandler.setHandler(\"stop_mining\", boost::bind(&simple_wallet::stop_mining, this, _1), \"Stop mining in daemon\");"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/CryptoNoteProtocol/CryptoNoteProtocolHandler.cpp",
+      "changes": [
+        {
+          "description": "Fix getinfo incorrect last_known_block_index when malicious is in place",
+          "action": "add_below",
+          "marker": "m_observedHeight = std::max(peerHeight, m_core.getTopBlockIndex() + 1);",
+          "parameters": {
+            "text": [
+              "    if (context.m_state == CryptoNoteConnectionContext::state_normal) {",
+              "      m_observedHeight = m_core.getTopBlockIndex();",
+              "    }"
+            ]
+          }
+        },
+        {
+          "description": "Fix getinfo incorrect last_known_block_index when malicious is in place",
+          "action": "replace",
+          "marker": "if (peerHeight > context.m_remote_blockchain_height) {",
+          "parameters": {
+            "text": [
+              "    if (context.m_remote_blockchain_height != 0 && context.m_last_response_height <= context.m_remote_blockchain_height) {",
+              "      m_observedHeight = context.m_remote_blockchain_height ;",
+              "      if (m_observedHeight != height) {",
+              "        updated = true;",
+              "      }",
+              "    } else if (peerHeight > context.m_remote_blockchain_height) {"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/crypto/crypto.h",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "static void hash_data_to_ec(const uint8_t*, std::size_t, PublicKey&);",
+          "parameters": {
+            "text": [
+              "    static KeyImage scalarmultKey(const KeyImage & P, const KeyImage & a);",
+              "    friend KeyImage scalarmultKey(const KeyImage & P, const KeyImage & a);"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "inline void hash_data_to_ec(const uint8_t* data, std::size_t len, PublicKey& key) {",
+          "parameters": {
+            "text": [
+              "  inline KeyImage scalarmultKey(const KeyImage & P, const KeyImage & a) {",
+              "    return crypto_ops::scalarmultKey(P, a);",
+              "  }",
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/crypto/crypto.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "return sizeof(rs_comm) + pubs_count * sizeof(rs_comm().ab[0]);",
+          "parameters": {
+            "text": [
+              "     return sizeof(rs_comm) + pubs_count * sizeof(ec_point_pair);"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "struct rs_comm {",
+          "parameters": {
+            "text": [
+              "  struct ec_point_pair {",
+              "    EllipticCurvePoint a, b;",
+              "  };"
+            ]
+          }
+        },
+        {
+          "action": "add_below",
+          "marker": "struct rs_comm {",
+          "parameters": {
+            "text": [
+              "  Hash h;",
+              "  struct ec_point_pair ab[];",
+              "};",
+              "/*"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "static inline size_t rs_comm_size(size_t pubs_count) {",
+          "parameters": {
+            "text": [
+              "*/"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "void crypto_ops::hash_data_to_ec(const uint8_t* data, std::size_t len, PublicKey& key) {",
+          "parameters": {
+            "text": [
+              "    KeyImage crypto_ops::scalarmultKey(const KeyImage & P, const KeyImage & a) {",
+              "        ge_p3 A;",
+              "        ge_p2 R;",
+              "// maybe use assert instead?",
+              "        ge_frombytes_vartime(&A, reinterpret_cast<const unsigned char*>(&P));",
+              "        ge_scalarmult(&R, reinterpret_cast<const unsigned char*>(&a), &A);",
+              "        KeyImage aP;",
+              "        ge_tobytes(reinterpret_cast<unsigned char*>(&aP), &R);",
+              "        return aP;",
+              "    }",
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/crypto/slow-hash.cpp",
+      "multiline": true,
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "(if \\(munmap\\(data, MAP_SIZE\\) != 0\\) {)[^}]+(})",
+          "parameters": {
+            "text": [
+              "\\1\n      std::terminate();\n    \\2"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/crypto/keccak.c",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "rsiz = sizeof(state_t) == mdlen ? HASH_DATA_AREA : 200 - 2 * mdlen;",
+          "parameters": {
+            "text": [
+              "/* for some reason the enum from hash-ops.h is not valid here when",
+              "   compiling - is this a C vs C++ thing? Anyhow, lets just redefine it for",
+              "   now. */",
+              "",
+              "const int HASH_DATA_AREA = 136;",
+              ""
+            ]
+          }
+        }
+      ]
+    },
+
+
+    {
+      "descritption": "Fix warning as error",
+      "path": "/src/SimpleWallet/SimpleWallet.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "Tools::SignalHandler::install([&wrpc, &wallet] {",
+          "parameters": {
+            "text": [
+              "    Tools::SignalHandler::install([&wrpc] {"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "descritption": "Fix warning as error",
+      "path": "/src/PaymentGateService/PaymentGateService.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "node->init([&log, &nodeInitStatus](std::error_code ec) {",
+          "parameters": {
+            "text": [
+              "  node->init([&nodeInitStatus](std::error_code ec) {"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "descritption": "Fix warning as error",
+      "path": "/src/BlockchainExplorer/BlockchainExplorer.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "[this, blockIndexesPtr, blocksPtr, topIndex](std::error_code ec) {",
+          "parameters": {
+            "text": [
+              "    [this, blockIndexesPtr, blocksPtr](std::error_code ec) {"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "descritption": "Fix warning as error",
+      "path": "/src/Wallet/WalletGreen.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "bool r = txIdIndex.modify(it, [this, transactionId, &info, totalAmount, &updated](WalletTransaction& transaction) {",
+          "parameters": {
+            "text": [
+              "  bool r = txIdIndex.modify(it, [&info, totalAmount, &updated](WalletTransaction& transaction) {"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "return eraseTransfers(transactionId, firstTransferIdx, [this, &knownAddresses, eraseOutputTransfers](bool isOutput, const std::string& transferAddress) {",
+          "parameters": {
+            "text": [
+              "  return eraseTransfers(transactionId, firstTransferIdx, [&knownAddresses, eraseOutputTransfers](bool isOutput, const std::string& transferAddress) {"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "m_transactions.get<TransactionIndex>().modify(it, [this, &transactionHash, &updated](CryptoNote::WalletTransaction& tx) {",
+          "parameters": {
+            "text": [
+              "  m_transactions.get<TransactionIndex>().modify(it, [&updated](CryptoNote::WalletTransaction& tx) {"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "descritption": "Fix warning as error",
+      "path": "/tests/UnitTests/INodeStubs.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "getNewBlocks(std::move(knownBlockIds), *resultHolder, startHeight, [resultHolder, callback, &startHeight, &newBlocks](std::error_code ec)",
+          "parameters": {
+            "text": [
+              "  getNewBlocks(std::move(knownBlockIds), *resultHolder, startHeight, [resultHolder, callback, &newBlocks](std::error_code ec)"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "descritption": "Fix warning as error",
+      "path": "/tests/UnitTests/TestBlockchainExplorer.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "[&status, this](const std::vector<BlockDetails>& newBlocks, const std::vector<BlockDetails>& orphanedBlocks) {",
+          "parameters": {
+            "text": [
+              "      [&status](const std::vector<BlockDetails>& newBlocks, const std::vector<BlockDetails>& orphanedBlocks) {"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "[&status, &blockHashes, this, NUMBER_OF_BLOCKS](const std::vector<BlockDetails>& newBlocks,",
+          "parameters": {
+            "text": [
+              "    [&status, &blockHashes, NUMBER_OF_BLOCKS](const std::vector<BlockDetails>& newBlocks,"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "[&status, this](const std::vector<TransactionDetails>& newTransactions,",
+          "parameters": {
+            "text": [
+              "    [&status](const std::vector<TransactionDetails>& newTransactions,"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "[&status, &poolTxs, this, POOL_TX_NUMBER](const std::vector<TransactionDetails>& newTransactions,",
+          "parameters": {
+            "text": [
+              "        [&status, &poolTxs, POOL_TX_NUMBER](const std::vector<TransactionDetails>& newTransactions,"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "> cb1 = [&status, this](const std::vector<BlockDetails>& newBlocks,",
+          "parameters": {
+            "text": [
+              "    > cb1 = [](const std::vector<BlockDetails>& newBlocks,"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "[&status, this](const std::vector<BlockDetails>& newBlocks,",
+          "parameters": {
+            "text": [
+              "    [](const std::vector<BlockDetails>& newBlocks,"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "[this](const std::vector<BlockDetails>& newBlocks, const std::vector<BlockDetails>& orphanedBlocks) {",
+          "parameters": {
+            "text": [
+              "    [](const std::vector<BlockDetails>& newBlocks, const std::vector<BlockDetails>& orphanedBlocks) {"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "[&status, this](const std::vector<BlockDetails>& newBlocks, const std::vector<BlockDetails>& orphanedBlocks) {",
+          "parameters": {
+            "text": [
+              "    [&status](const std::vector<BlockDetails>& newBlocks, const std::vector<BlockDetails>& orphanedBlocks) {"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "[&status, this](const std::vector<TransactionDetails>& newTransactions,",
+          "parameters": {
+            "text": [
+              "    [&status](const std::vector<TransactionDetails>& newTransactions,"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "path": "/src/CryptoNoteCore/TransactionValidationErrors.h",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "INPUT_IDENTICAL_KEYIMAGES,",
+          "parameters": {
+            "text": [
+              "  INPUT_INVALID_DOMAIN_KEYIMAGES,"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "case TransactionValidationError::INPUT_IDENTICAL_KEYIMAGES:",
+          "parameters": {
+            "text": [
+              "      case TransactionValidationError::INPUT_INVALID_DOMAIN_KEYIMAGES: return \"Transaction uses key image not in the valid domain\";"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/CryptoNoteCore/Core.h",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "std::error_code validateSemantic(const Transaction& transaction, uint64_t& fee);",
+          "parameters": {
+            "text": [
+              "  std::error_code validateSemantic(const Transaction& transaction, uint64_t& fee, uint32_t blockIndex);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/CryptoNoteCore/Core.cpp",
+      "changes": [
+        {
+          "action": "replace",
+          "marker": "auto error = validateSemantic(transaction, fee);",
+          "parameters": {
+            "text": [
+              "auto error = validateSemantic(transaction, fee, blockIndex);"
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": "std::error_code Core::validateSemantic(const Transaction& transaction, uint64_t& fee) {",
+          "parameters": {
+            "text": [
+              "std::error_code Core::validateSemantic(const Transaction& transaction, uint64_t& fee, uint32_t blockIndex) {"
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "uint64_t summaryInputAmount = 0;",
+          "parameters": {
+            "text": [
+              "    // parameters used for the additional key_image check",
+              "    static const Crypto::KeyImage Z = { {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };",
+              "    static const Crypto::KeyImage I = { {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };",
+              "    static const Crypto::KeyImage L = { {0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 } };",
+              ""
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "if (std::find(++std::begin(in.outputIndexes), std::end(in.outputIndexes), 0) != std::end(in.outputIndexes)) {",
+          "parameters": {
+            "text": [
+              "  // Fix discovered by Monero Lab and suggested by \"fluffypony\" (bitcointalk.org)",
+              "  if (!(scalarmultKey(in.keyImage, L) == I) && blockIndex > parameters::KEY_IMAGE_CHECKING_BLOCK_INDEX) {",
+              "    return error::TransactionValidationError::INPUT_INVALID_DOMAIN_KEYIMAGES;",
+              "  }",
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/Rpc/RpcServer.cpp",
+      "changes": [
+        {
+          "description": "https://github.com/amjuarez/bytecoin/pull/197",
+          "action": "replace",
+          "marker": "logger(INFO) << \"[on_send_raw_tx]: tx verification failed\";",
+          "parameters": {
+            "text": [
+              "     logger(DEBUGGING) << \"[on_send_raw_tx]: tx verification failed\";"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Makefile",
+      "changes": [
+        {
+          "action": "add_above",
+          "marker": "cmake-debug:",
+          "parameters": {
+            "text": [
+              "cmake-debug-static:",
+              "\tmkdir -p build/debug",
+              "\tcd build/debug && cmake -D STATIC=ON -D CMAKE_BUILD_TYPE=Debug ../..",
+              "",
+              "build-debug-static: cmake-debug-static",
+              "\tcd build/debug && $(MAKE)",
+              ""
+            ]
+          }
+        },
+        {
+          "action": "add_above",
+          "marker": "cmake-release:",
+          "parameters": {
+            "text": [
+              "cmake-release-static:",
+              "\tmkdir -p build/release",
+              "\tcd build/release && cmake -D STATIC=ON -D CMAKE_BUILD_TYPE=Release ../..",
+              "",
+              "build-release-static: cmake-release-static",
+              "\tcd build/release && $(MAKE)",
+              ""
+            ]
+          }
+        },
+        {
+          "action": "replace",
+          "marker": ".PHONY: all cmake-debug build-debug test-debug all-debug cmake-release build-release test-release all-release clean tags",
+          "parameters": {
+            "text": [
+              ".PHONY: all cmake-debug build-debug test-debug all-debug cmake-release-static build-release-static cmake-release build-release test-release all-release clean tags"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/src/Transfers/TransfersConsumer.cpp",
+      "changes": [
+        {
+          "description": "",
+          "action": "replace",
+          "marker": "m_syncStart = res->getSyncStart();",
+          "parameters": {
+            "text": [
+              "    auto subStart = res->getSyncStart();",
+              "    m_syncStart.height = std::min(m_syncStart.height, subStart.height);",
+              "    m_syncStart.timestamp = std::min(m_syncStart.timestamp, subStart.timestamp);"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
