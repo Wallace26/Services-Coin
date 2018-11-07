@@ -34,7 +34,7 @@ Mobile:       +27 61 900 4206
 Mail(temp):   cryptomaniac26@gmail.com
 
 Also currently juggling sweeping of the warehouse, social butterfly-ness, and responsible for happiness at:
-cryptomaniax.co.za/
+http://cryptomaniax.co.za/
 
 
 PS: Whitepaper and official site will be up soon as well. The only difference here is:
