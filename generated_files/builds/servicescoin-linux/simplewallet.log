@@ -2198,3 +2198,8 @@ Use "help" command to see the list of available commands.
 2018-Nov-07 08:02:28.894082 INFO    [simplewallet] Height 921, transaction 2bf4c0526c76f06cbe5f0231af75c52382b974bf31c4951289c40f69c8a03dab, received 70.121948444013
 2018-Nov-07 08:06:48.716700 INFO    [simplewallet] Height 922, transaction d2719df61dd5519b3e1e9f56f58e1bee0700ba7cdd560c4b5f390848ff5275c4, received 70.121680950008
 2018-Nov-07 08:06:58.882310 INFO    [simplewallet] Height 923, transaction cc96288b8f9327033f7a7994580cbcabc656c951d63587bfab184a64f790555c, received 70.121413457024
+2018-Nov-07 08:11:28.879045 INFO    [simplewallet] Height 924, transaction 853d28ddad24a6d37e366817ff4034c988f32a3db718b4f777209eccf5a72c84, received 70.121145965060
+2018-Nov-07 08:14:34.573775 INFO    [simplewallet] Height 925, transaction 115d16eda78fedfc1aa90192860ef3b2f01c987ecc97395eab792ad2b7922499, received 70.120878474116
+2018-Nov-07 08:14:55.969082 INFO    [simplewallet] available balance: 64275.038303158472, locked amount: 701.220821956077
+2018-Nov-07 08:15:29.882080 INFO    [simplewallet] Height 926, transaction 21ad0a78ff0baf6bba4c7fe976b38e42871c7af2a32156be5def589efa46be4f, received 70.120610984192
+2018-Nov-07 08:16:24.674815 INFO    [simplewallet] Height 927, transaction 2582a005ef024b591e84b23eaf1a792102b78cfe4c2b3b71009848cfde419fbf, received 70.120343495289
