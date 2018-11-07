@@ -21,7 +21,7 @@ This will reduce, or perhaps eliminate the need to accept cash payments, or carr
 
 This project will be totally and completely focused on the Mzansi landscape, and all of our Micro and small businesses. 
 
-The original name was supposed to have been named HayleysComet(Coin), but was just not working in most configurations etc etc. But nonetheless, this is dedicated to her, as a reminder that she will be awesome, in everything she does.  
+The original name was supposed to have been named HayleysComet(Coin), after my daughter, but was just not working in most configurations etc etc. But nonetheless, this is dedicated to her, as a reminder that she will be awesome, in everything she does.  
 
 I can be reached directly at any of the below, at any time of the day, or night:
 
