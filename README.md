@@ -29,7 +29,7 @@ Here is toasting to an awesome journey!
 
 Wallace
 
-Mobile:       +27 61 900 4206
+Mobile:       +27 63 035 05341
 
 Mail(temp):   cryptomaniac26@gmail.com
 
@@ -38,7 +38,8 @@ http://cryptomaniax.co.za/
 
 
 PS: Whitepaper and official site will be up soon as well. The only difference here is:
-No standard ICO, as in the sense of 0% pre-sale of any coin, for infrastructure here, or there. No "fund-raising" WHATSOEVER!
+No standard ICO
+
 This coin is is an ode to the "small" people. And is going exactly there:)
 
 
